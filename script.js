@@ -6,25 +6,25 @@ class Order {
     }
 
     addItem(item) {
+        if (this.paid) {
+            throw new Error ('No changes are allowed after payment');
+        }
+
         this.orderArray.push(item);
         return this;
     }
 
     deleteItem(item) {
-        if (this.orderArray.length) {
-            this.orderArray.splice(this.orderArray.indexOf(item), 1);
-        } else {
-            console.log('The order is empty');
+        if (this.paid) {
+            throw new Error ('No changes are allowed after payment');
         }
+
+        this.orderArray.length ? this.orderArray.splice(this.orderArray.indexOf(item), 1) : console.log('The order is empty');
         return this;
     }
 
     pay() {
-        if (this.paid) {
-            console.log('The order has been paid')
-        } else {
-            this.paid = true;
-        }
+        this.paid ? console.log('The order has been paid') : this.paid = true;
         return this;
     }
 
@@ -80,7 +80,7 @@ class Hamburger extends MenuItem {
     }
 
     calculatePrice() {
-        return this.size.price + this.stuffing.price
+        return this.size.price + this.stuffing.price;
     }
 
     calculateCalories() {
@@ -129,7 +129,11 @@ class Drink extends MenuItem {
     }
 }
 
+
+// create an order
 const order = new Order();
+
+// create order items
 const burger = new Hamburger(Hamburger.SIZE_LARGE, Hamburger.STUFFING_SALAD);
 const salad = new Salad(Salad.CAESAR, 200);
 const coffee = new Drink(Drink.COFFEE);
@@ -137,5 +141,18 @@ const coffee = new Drink(Drink.COFFEE);
 console.log(burger);
 console.log(salad);
 console.log(coffee);
+
+// add items to the order
 order.addItem(burger).addItem(salad).addItem(coffee).addItem(coffee);
-console.log(order.getTotalPrice())
+
+// change the order
+console.log(order.deleteItem(coffee));
+
+// calculate total price of the order
+console.log(order.getTotalPrice());
+
+// pay for the order
+console.log(order.pay());
+
+// try to change the order after payment and get an error
+console.log(order.addItem(burger))
