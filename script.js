@@ -19,7 +19,16 @@ class Order {
             throw new Error ('No changes are allowed after payment');
         }
 
-        this.orderArray.length ? this.orderArray.splice(this.orderArray.indexOf(item), 1) : console.log('The order is empty');
+        if (this.orderArray.length) {
+            if (this.orderArray.includes(item)) {
+                this.orderArray.splice(this.orderArray.indexOf(item), 1);
+            } else {
+                console.log('The item is not found in the order');
+            }
+        } else {
+            console.log('The order is empty');
+        }
+
         return this;
     }
 
@@ -42,23 +51,14 @@ class Order {
 }
 
 class MenuItem {
-    constructor(price, calories) {
-        this.price = price;
-        this.calories = calories;
-    }
-
-    calculatePrice() {
-        return this.price;
-    }
-
-    calculatePrice() {
-        return this.calories;
+    constructor(id) {
+        this.id = id;
     }
 }
 
 class Hamburger extends MenuItem {
     constructor(size, stuffing) {
-        super();
+        super(Hamburger.PRODUCT);
         this.size = size;
         this.stuffing = stuffing;
         this.price = this.calculatePrice();
@@ -70,6 +70,7 @@ class Hamburger extends MenuItem {
     static STUFFING_CHEESE = { type: 'cheese', price: 10, calories: 20 };
     static STUFFING_SALAD = { type: 'salad', price: 20, calories: 5 };
     static STUFFING_POTATO = { type: 'potato', price: 15, calories: 10 };
+    static PRODUCT = 'hamburgers';
 
     getSize() {
         return this.size.type;
@@ -90,7 +91,7 @@ class Hamburger extends MenuItem {
 
 class Salad extends MenuItem {
     constructor(name, weight) {
-        super();
+        super(Salad.PRODUCT);
         this.name = name;
         this.weight = weight;
         this.price = this.calculatePrice();
@@ -99,19 +100,21 @@ class Salad extends MenuItem {
 
     static CAESAR = { type: 'caesar', price: 200, calories: 20 };
     static OLIVIE = { type: 'olivie', price: 50, calories: 80 };
+    static BASE_WEIGHT = 100;
+    static PRODUCT = 'salads';
 
     calculatePrice() {
-        return this.name.price * (this.weight / 100);
+        return this.name.price * (this.weight / Salad.BASE_WEIGHT);
     }
 
     calculateCalories() {
-        return this.name.calories * (this.weight / 100);
+        return this.name.calories * (this.weight / Salad.BASE_WEIGHT);
     }
 }
 
 class Drink extends MenuItem {
     constructor(name) {
-        super();
+        super(Drink.PRODUCT);
         this.name = name;
         this.price = this.calculatePrice();
         this.calories = this.calculateCalories();
@@ -119,6 +122,7 @@ class Drink extends MenuItem {
 
     static COLA = { type: 'cola', price: 50, calories: 40 };
     static COFFEE = { type: 'coffee', price: 80, calories: 20 };
+    static PRODUCT = 'drinks';
 
     calculatePrice() {
         return this.name.price;
@@ -143,10 +147,10 @@ console.log(salad);
 console.log(coffee);
 
 // add items to the order
-order.addItem(burger).addItem(salad).addItem(coffee).addItem(coffee);
+order.addItem(burger).addItem(salad).addItem(coffee);
 
 // change the order
-console.log(order.deleteItem(coffee));
+order.deleteItem(burger);
 
 // calculate total price of the order
 console.log(order.getTotalPrice());
@@ -155,4 +159,4 @@ console.log(order.getTotalPrice());
 console.log(order.pay());
 
 // try to change the order after payment and get an error
-console.log(order.addItem(burger))
+order.addItem(salad);
